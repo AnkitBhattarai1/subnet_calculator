@@ -18,54 +18,61 @@ public class Calculator {
 		calc();
 	}
 
-	public Calculator() {
-
-	}
-
 	public void calc() {
-		if (addressType == iptype.IPv4)
-			ipv4();
+		ipv4();
+
 	}
 
-	private char findIpClassType(IPv4 address) {
-
+	private void findIpClassType(IPv4 address) {
 		String addressinBinary = Integer.toBinaryString(Integer.parseInt(address.oct[0]));
 		if (addressinBinary.length() < 8) {
-			this.classType = 'A';
-			this.networkBits = 8;
-			this.noofSubnets = (int) Math.pow(2, subnetMask - 8);
-		}
-
-		else if (addressinBinary.startsWith("10")) {
-			this.classType = 'B';
-			this.networkBits = 16;
+			classType = 'A';
+			networkBits = 8;
+		} else if (addressinBinary.startsWith("10")) {
+			classType = 'B';
+			networkBits = 16;
 		} else if (addressinBinary.startsWith("110")) {
-			this.classType = 'C';
-			this.networkBits = 24;
+			classType = 'C';
+			networkBits = 24;
 		} else if (addressinBinary.startsWith("1110")) {
-			this.classType = 'D';
-			this.networkBits = 31;
+			classType = 'D';
+			networkBits = 31;
 		} else if (addressinBinary.startsWith("1111")) {
-			this.classType = 'E';
-			this.networkBits = 32;
+			classType = 'E';
+			networkBits = 32;
 		}
-
-		return this.classType;
 
 	}
 
 	private IPv4 findNetworkAddress(IPv4 address) {
-		return (IPv4) this.networkAddress;
-	}
+		String binaryAddress = "";
+		String addressinBinary[] = new String[4];
+		String networkAddressinBinary = "";
+		String networkAddressinString = "";
+		for (int i = 0; i < 4; i++) {
+			addressinBinary[i] = Integer.toBinaryString(Integer.parseInt(address.oct[i]));
 
-	private int findnoofSubnets(IPv4 address) {
-		return (this.noofSubnets = (int) Math.pow(2, subnetMask - this.networkBits));
+			while (addressinBinary[i].length() < 8) {
+				addressinBinary[i] = "0" + addressinBinary[i];
+			}
+
+			binaryAddress = binaryAddress + addressinBinary[i];
+		}
+		String replacement = "0".repeat(32 - subnetMask);
+		networkAddressinBinary = binaryAddress.substring(0, subnetMask) + replacement;
+		networkAddressinString = String.valueOf(Integer.parseInt(networkAddressinBinary.substring(0, 8), 2)) + "."
+				+ String.valueOf(Integer.parseInt(networkAddressinBinary.substring(8, 16), 2)) + "."
+				+ String.valueOf(Integer.parseInt(networkAddressinBinary.substring(16, 24), 2)) + "."
+				+ String.valueOf(Integer.parseInt(networkAddressinBinary.substring(24, 32), 2));
+
+		this.networkAddress = new IPv4(networkAddressinString);
+		return (IPv4) networkAddress;
 	}
 
 	private void ipv4() {
 		IPv4 address = new IPv4(inputAddress.toString());
 		findIpClassType(address);
-		findnoofSubnets(address);
+		findNetworkAddress(address);
 		this.hostsperSubnet = (int) Math.pow(2, 32 - subnetMask);
 	}
 
