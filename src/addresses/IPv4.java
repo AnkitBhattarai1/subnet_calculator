@@ -18,6 +18,13 @@ public class IPv4 extends Address {
 
 	}
 
+	public IPv4(String ipv4) {
+
+		this.oct = ipv4.split("\\.");
+		makeaddress(oct);
+		this.iptype = iptype.IPv4;
+	}
+
 	public IPv4(String oct1, String oct2, String oct3, String oct4) {
 		this(new String[] { oct1, oct2, oct3, oct4 });
 	}
@@ -28,12 +35,6 @@ public class IPv4 extends Address {
 
 	public IPv4(int[] oct) {
 		this(Arrays.stream(oct).mapToObj(String::valueOf).toArray(String[]::new));
-	}
-
-	public IPv4(String ipv4) {
-
-		this.oct = ipv4.split("\\.");
-		makeaddress(oct);
 	}
 
 	public IPv4(IPv4 ipv4) {
@@ -52,6 +53,5 @@ public class IPv4 extends Address {
 		}
 		address = address.substring(0, address.length() - 1);
 	}
-
 
 }
